@@ -1,0 +1,16 @@
+[Unit]
+Description=AXP20x power off
+DefaultDependencies=no
+# After filesystems are unmounted but before kernel halts
+Before=poweroff.target halt.target final.target
+Conflicts=reboot.target kexec.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bash /usr/libexec/axp-poweroff.sh
+TimeoutStartSec=10
+StandardOutput=kmsg
+StandardError=kmsg
+
+[Install]
+WantedBy=poweroff.target halt.target

@@ -1,0 +1,54 @@
+# Options you can adjust for all Raspberry Pi Revisions
+# https://www.raspberrypi.com/documentation/computers/config_txt.html
+# Some settings may impact device functionality. See link above for details
+
+# To use this on Fedora you need to use firmware provided device tree, not kernel
+# For this functionality follow the following guide:
+# https://fedoraproject.org/w/index.php?title=Architectures/ARM/Raspberry_Pi/HATs
+
+# Details on overlays and additional parameters are documented in
+# /boot/efi/overlays/README
+
+# Default Fedora configs for all Raspberry Pi Revisions
+
+# Put the RPi into 64 bit mode
+arm_64bit=1
+
+# We use U-Boot
+kernel=rpi-u-boot.bin
+
+boot_delay=0
+
+# Run as fast as the firmware allows
+arm_boost=1
+
+# Stop the RPi turning on HDMI monitors on reboot
+hdmi_ignore_cec_init=1
+
+ignore_lcd=1
+max_framebuffers=2
+disable_overscan=1
+dtparam=audio=on
+dtoverlay=audremap,pins_12_13
+dtoverlay=dwc2,dr_mode=host
+dtparam=ant2
+#display_auto_detect=0
+
+# Raspberry Pi 4 series
+[pi4]
+dtoverlay=upstream-pi4
+dtoverlay=clockworkpi-uconsole-cm4
+dtoverlay=vc4-kms-v3d-pi4,cma-384
+dtparam=spi=on
+dtparam=i2c_arm=on
+enable_uart=1
+
+# 4K@60Hz display support, only one port can be used at 60Hz, RPi4 only
+# hdmi_enable_4kp60=1
+
+# Raspberry Pi CM4
+[cm4]
+# Enable host mode on the 2711 built-in XHCI USB controller.
+# This line should be removed if the legacy DWC2 controller is required
+# (e.g. for USB device mode) or if USB support is not required.
+otg_mode=1

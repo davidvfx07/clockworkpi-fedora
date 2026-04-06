@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
+name: cf-uconsole-base
+
+description: An unofficial Fedora IOT base image for the ClockworkPi uConsole.
+
+base-image: quay.io/fedora/fedora-iot
+image-version: 43-aarch64
+
+modules:
+  - from-file: common.yml
+ 
+  - type: signing

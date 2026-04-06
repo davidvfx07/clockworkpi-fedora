@@ -1,0 +1,145 @@
+modules:
+  - type: dnf
+    remove:
+      packages:
+        - kernel
+        - kernel-core
+        - kernel-modules
+        - kernel-modules-core
+        - kernel-tools
+        - kernel-tools-internal
+
+        # Unnecessary bloat
+        - atheros-firmware
+        - iwlwifi-mvm-firmware
+        - realtek-firmware
+
+        # Unnecessary in this non-headless scenario
+        - greenboot
+        - greenboot-default-health-checks
+
+  - type: dnf
+    repos:
+      copr:
+        - kwizart/kernel-longterm-6.12
+    install:
+      allow-erasing: true
+      packages:
+        - kernel-longterm
+        - kernel-longterm-core
+        - kernel-longterm-modules
+        - kernel-longterm-modules-core
+        - kernel-longterm-modules-extra
+        
+        # Requirements to build dkms modules
+        - dkms
+        - gcc
+        - make
+        - kernel-longterm-devel
+
+  - type: files
+    files:
+      - source: cf-modules
+        destination: /usr/lib/cf-modules
+
+  - type: script
+    scripts:
+      - build-cf-modules.sh
+
+  - type: dnf
+    install:
+      allow-erasing: true
+      packages:
+        # Basic hardware control utils
+        - libgpiod-utils
+        - upower
+        - tuned
+        - brightnessctl
+        - socat
+
+        # axp-poweroff requirements
+        - i2c-tools
+
+        # Initial setup requirements
+        - cloud-utils-growpart
+        - parted
+
+        # Basic packages not shipped in IOT
+        - ncurses
+        - ncurses-libs
+        - git
+        - nano
+        - vim
+        - htop
+        - man
+
+        # Atomic Fedora tools
+        - toolbox
+        - distrobox
+        - podman
+
+  - type: files
+    files:
+      - source: axp-poweroff/axp-poweroff.sh
+        destination: /usr/libexec/
+      - source: axp-poweroff/axp-poweroff.service
+        destination: /usr/lib/systemd/system/
+      - source: firstboot.service
+        destination: /usr/lib/systemd/system/
+      - source: bin/cf-cellctl.sh
+        destination: /usr/local/bin/cf-cellctl
+
+  - type: script
+    snippets:
+      - chmod +x /usr/local/bin/cf-cellctl
+      - echo PasswordAuthentication yes > /etc/ssh/ssh_config.d/40-permit-password-auth.conf
+        
+  - type: systemd
+    system:
+      enabled:
+        - axp-poweroff.service
+        - firstboot.service
+      disabled:
+        - bootloader-update.service
+      masked:
+        - bootloader-update.service
+
+  - type: kargs
+    kargs:
+      - "loglevel=3"
+      - "console=tty1"
+
+  # The following significantly reduces boot time
+  - type: systemd
+    system:
+      disabled:
+        - NetworkManager-wait-online.service
+        - dkms.service
+
+      masked:
+        - dkms.service
+
+  - type: script
+    snippets:
+      - mkdir -p /usr/lib/systemd/system/firewalld.service.d
+      - echo -e "[Service]\nType=simple" | tee /usr/lib/systemd/system/firewalld.service.d/override.conf
+
+      - mkdir -p /usr/lib/systemd/system/NetworkManager.service.d
+      - echo -e "[Service]\nType=simple" | tee /usr/lib/systemd/system/NetworkManager.service.d/override.conf
+
+      - mkdir -p /usr/lib/systemd/system/tuned.service.d
+      - echo -e "[Service]\nType=simple" | tee /usr/lib/systemd/system/tuned.service.d/override.conf
+
+      - mkdir -p /usr/lib/systemd/system/ModemManager.service.d
+      - echo -e "[Service]\nType=simple" | tee /usr/lib/systemd/system/ModemManager.service.d/override.conf
+
+      - mkdir -p /usr/lib/systemd/system/upower.service.d
+      - echo -e "[Service]\nType=simple" | tee /usr/lib/systemd/system/upower.service.d/override.conf
+
+  - type: os-release
+    properties:
+      ID: fedora
+      NAME: ClockworkPi Fedora - uConsole
+      PRETTY_NAME: ClockworkPi Fedora 43 (Forty Three) - uConsole
+
+  - type: initramfs

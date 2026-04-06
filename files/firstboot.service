@@ -1,0 +1,20 @@
+[Unit]
+Description=First boot setup
+After=local-fs.target
+ConditionPathExists=!/var/lib/firstboot-finished
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/growpart /dev/mmcblk0 3
+ExecStart=/usr/bin/partprobe /dev/mmcblk0
+ExecStart=/usr/bin/resize2fs /dev/mmcblk0p3
+ExecStart=/usr/bin/systemctl daemon-reload
+
+ExecStart=/usr/bin/bash -c 'useradd -m -G wheel core'
+ExecStart=/usr/bin/bash -c 'echo "core:core" | chpasswd'
+ExecStartPost=/usr/bin/touch /var/lib/firstboot-finished
+
+ExecStart=/usr/bin/systemctl reboot
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
+name: cf-uconsole-lxqt
+
+description: An unofficial Fedora IOT image with LXQT for the ClockworkPi uConsole.
+
+base-image: quay.io/fedora/fedora-iot
+image-version: 43-aarch64
+
+modules:
+  - from-file: common.yml
+  
+  - type: dnf
+    group-install:   
+      packages:
+        - lxqt-desktop
+
+  - type: signing

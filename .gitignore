@@ -1,0 +1,6 @@
+cosign.key
+cosign.private
+*.gz
+*.raw
+/Containerfile
+/.bluebuild-scripts_*
