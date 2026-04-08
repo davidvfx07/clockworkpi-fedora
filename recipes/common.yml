@@ -41,6 +41,8 @@ modules:
     files:
       - source: cf-modules
         destination: /usr/lib/cf-modules
+      - source: dracut.conf.d/uconsole-panel.conf
+        destination: /etc/dracut.conf.d/
 
   - type: script
     scripts:

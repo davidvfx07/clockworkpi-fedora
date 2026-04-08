@@ -1,9 +1,8 @@
 [Unit]
 Description=AXP20x power off
 DefaultDependencies=no
-# After filesystems are unmounted but before kernel halts
-Before=poweroff.target halt.target final.target
-Conflicts=reboot.target kexec.target
+After=shutdown.target umount.target
+Before=systemd-poweroff.service
 
 [Service]
 Type=oneshot
@@ -13,4 +12,4 @@ StandardOutput=kmsg
 StandardError=kmsg
 
 [Install]
-WantedBy=poweroff.target halt.target
+WantedBy=poweroff.target
