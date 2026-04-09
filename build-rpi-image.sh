@@ -5,6 +5,8 @@ CONTAINER_IMAGE="registry:ghcr.io/davidvfx07/cf-uconsole-base:latest"
 OUTPUT_IMAGE="registry:ClockworkPi-Fedora-uConsole-Base-raw-43.raw"
 IMAGE_SIZE="7GB"
 
+echo "Beware that configuration happens at the top of this script. If desired, make changes accordingly."
+
 pushd image-builder
 
 sudo setenforce 0

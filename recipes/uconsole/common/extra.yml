@@ -1,0 +1,25 @@
+modules:
+  - from-file: uconsole/common/base.yml
+
+  - type: dnf
+    install:
+      allow-erasing: true
+      packages:
+        # Harcware utils
+        - upower
+        - brightnessctl
+        - socat
+
+        # CLI utils
+        - ncurses
+        - ncurses-libs
+        - nano
+        - vim
+        - htop
+        - man
+
+        # Dev utils
+        - git
+        - toolbox
+        - distrobox
+        - podman

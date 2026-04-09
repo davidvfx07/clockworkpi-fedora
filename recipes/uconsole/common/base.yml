@@ -9,7 +9,7 @@ modules:
         - kernel-tools
         - kernel-tools-internal
 
-        # Unnecessary bloat
+        # Unnecessary bloat, more can be added to this list
         - atheros-firmware
         - iwlwifi-mvm-firmware
         - realtek-firmware
@@ -20,6 +20,7 @@ modules:
 
   - type: dnf
     repos:
+      cleanup: true
       copr:
         - kwizart/kernel-longterm-6.12
     install:
@@ -52,12 +53,8 @@ modules:
     install:
       allow-erasing: true
       packages:
-        # Basic hardware control utils
+        # Cellctl requirements
         - libgpiod-utils
-        - upower
-        - tuned
-        - brightnessctl
-        - socat
 
         # axp-poweroff requirements
         - i2c-tools
@@ -65,20 +62,6 @@ modules:
         # Initial setup requirements
         - cloud-utils-growpart
         - parted
-
-        # Basic packages not shipped in IOT
-        - ncurses
-        - ncurses-libs
-        - git
-        - nano
-        - vim
-        - htop
-        - man
-
-        # Atomic Fedora tools
-        - toolbox
-        - distrobox
-        - podman
 
   - type: files
     files:
@@ -88,12 +71,12 @@ modules:
         destination: /usr/lib/systemd/system/
       - source: firstboot.service
         destination: /usr/lib/systemd/system/
-      - source: bin/cf-cellctl.sh
-        destination: /usr/local/bin/cf-cellctl
+      - source: bin/cellctl.sh
+        destination: /usr/local/bin/cellctl
 
   - type: script
     snippets:
-      - chmod +x /usr/local/bin/cf-cellctl
+      - chmod +x /usr/local/bin/cellctl
       - echo PasswordAuthentication yes > /etc/ssh/ssh_config.d/40-permit-password-auth.conf
         
   - type: systemd
@@ -129,19 +112,10 @@ modules:
       - mkdir -p /usr/lib/systemd/system/NetworkManager.service.d
       - echo -e "[Service]\nType=simple" | tee /usr/lib/systemd/system/NetworkManager.service.d/override.conf
 
-      - mkdir -p /usr/lib/systemd/system/tuned.service.d
-      - echo -e "[Service]\nType=simple" | tee /usr/lib/systemd/system/tuned.service.d/override.conf
-
       - mkdir -p /usr/lib/systemd/system/ModemManager.service.d
       - echo -e "[Service]\nType=simple" | tee /usr/lib/systemd/system/ModemManager.service.d/override.conf
 
       - mkdir -p /usr/lib/systemd/system/upower.service.d
       - echo -e "[Service]\nType=simple" | tee /usr/lib/systemd/system/upower.service.d/override.conf
-
-  - type: os-release
-    properties:
-      ID: fedora
-      NAME: ClockworkPi Fedora - uConsole
-      PRETTY_NAME: ClockworkPi Fedora 43 (Forty Three) - uConsole
 
   - type: initramfs

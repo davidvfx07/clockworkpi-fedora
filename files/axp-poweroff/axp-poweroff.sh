@@ -1,12 +1,12 @@
 #!/bin/bash
 set -e
 
-# Sync filesystems to ensure data safety before power cut
+# Sync filesystems again to ensure data safety before power cut, just in case
 sync
 
 modprobe i2c-dev || true
 
-# Ensure AXP20x driver is unbound
+# Ensure AXP20x driver is not locking the i2c driver
 echo '0-0034' > /sys/bus/i2c/drivers/axp20x-i2c/unbind 2>/dev/null || true
 
 sleep 0.5
